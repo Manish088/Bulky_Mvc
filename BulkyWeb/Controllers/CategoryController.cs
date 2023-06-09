@@ -16,7 +16,7 @@ namespace BulkyWeb.Controllers
         // GET: CategoryController
         public ActionResult Index()
         {
-            List<Category> objCategoryList=_db.Categories.ToList();
+            List<Category> objCategoryList = _db.Categories.ToList();
             return View(objCategoryList);
         }
 
@@ -34,12 +34,26 @@ namespace BulkyWeb.Controllers
 
         // POST: CategoryController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Create(Category obj)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if(obj.Name==obj.DisplayOrder.ToString())
+                {
+                    ModelState.AddModelError("Name","The DisplayOrders Cannot exactly match the Name.");
+                }
+                if (obj.Name!=null && obj.Name.ToLower() =="test")
+                {
+                    ModelState.AddModelError("", "The Test is an invalid Value.");
+                }
+                if (ModelState.IsValid)
+                {
+                    _db.Categories.Add(obj);
+                    _db.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
             }
             catch
             {
