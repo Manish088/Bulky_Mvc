@@ -94,6 +94,7 @@ namespace BulkyWeb.Controllers
                 {
                     _db.Categories.Update(obj);
                     _db.SaveChanges();
+                    TempData["Success"] = "category Update SuccessFully";
                     return RedirectToAction(nameof(Index));
                 }
                 return View();
