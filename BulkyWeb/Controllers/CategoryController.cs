@@ -39,18 +39,19 @@ namespace BulkyWeb.Controllers
         {
             try
             {
-                if(obj.Name==obj.DisplayOrder.ToString())
+                if (obj.Name == obj.DisplayOrder.ToString())
                 {
-                    ModelState.AddModelError("Name","The DisplayOrders Cannot exactly match the Name.");
+                    ModelState.AddModelError("Name", "The DisplayOrders Cannot exactly match the Name.");
                 }
-                if (obj.Name!=null && obj.Name.ToLower() =="test")
+                /*if (obj.Name != null && obj.Name.ToLower() == "test")
                 {
                     ModelState.AddModelError("", "The Test is an invalid Value.");
-                }
+                }*/
                 if (ModelState.IsValid)
                 {
                     _db.Categories.Add(obj);
                     _db.SaveChanges();
+                    TempData["Success"] = "category Created SuccessFully";
                     return RedirectToAction(nameof(Index));
                 }
                 return View();
@@ -62,19 +63,41 @@ namespace BulkyWeb.Controllers
         }
 
         // GET: CategoryController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            Category? categoryFromDb = _db.Categories.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Category obj)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if(obj==null)
+                {
+                    return NotFound();
+                }
+                if (ModelState.IsValid)
+                {
+                    _db.Categories.Update(obj);
+                    _db.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
+                
             }
             catch
             {
@@ -83,19 +106,38 @@ namespace BulkyWeb.Controllers
         }
 
         // GET: CategoryController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            Category? categoryFromDb = _db.Categories.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
         }
 
         // POST: CategoryController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpPost,ActionName("Delete")]
+        
+        public ActionResult DeletePost(int? id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                Category? obj=_db.Categories.Find(id);
+                if(obj==null)
+                {
+                    return NotFound();
+                }
+                _db.Categories.Remove(obj);
+                _db.SaveChanges();
+                TempData["Success"] = "category Delete SuccessFully";
+                return RedirectToAction("Index");
             }
             catch
             {
