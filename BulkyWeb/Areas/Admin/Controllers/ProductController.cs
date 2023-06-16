@@ -13,9 +13,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ProductController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: ProductController
@@ -29,7 +31,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
 
         // GET: ProductController/Create
-        public ActionResult Create()
+        public ActionResult Upsert(int? id)
         {
             /*IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
                 .Select(u => new SelectListItem
@@ -50,14 +52,23 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 }),
                 Product = new Product()
             };
-
-            return View(productVM);
+            if(id==null || id==0)
+            {
+                // Create
+                return View(productVM);
+            }
+            else
+            {
+                // Update
+                productVM.Product = _unitOfWork.Product.Get(u => u.Id == id);
+                return View(productVM);
+            }
         }
 
         // POST: ProductController/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Create(ProductVM ProductVM)
+        public ActionResult Upsert(ProductVM ProductVM,IFormFile? file)
         {
             try
             {
@@ -65,6 +76,17 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    if(file!=null)
+                    {
+                        string filename=Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        string productPath=Path.Combine(wwwRootPath,@"Images\Product");
+                        using (var fileStream =new FileStream(Path.Combine(productPath, filename),FileMode.Create))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+                        ProductVM.Product.ImageUrl = @"\Images\product\" + filename;
+                    }
                     _unitOfWork.Product.Add(ProductVM.Product);
                     _unitOfWork.save();
                     TempData["Success"] = "product Created SuccessFully";
