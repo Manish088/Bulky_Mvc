@@ -4,7 +4,7 @@
     <div class="card-header bg-secondary bg-gradientn m-lg-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Create Product</h2>
+                <h2 class="text-white py-2">Product List</h2>
             </div>
         </div>
     </div>
@@ -20,12 +20,12 @@
                     <a asp-action="Upsert" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New Product</a>
                 </div>
             </div>
-            <table class="table table-bordered table-striped">
+            <table id="tblData" class="table table-bordered table-striped" style="width:100%">
                 <thead>
                     <tr>
                        
                         <th>Title</th>
-                        <th>Description</th>
+                       @*  <th>Description</th> *@
                         <th>ISBN</th>
                         <th>Author</th>
                         <th>Price</th>
@@ -33,30 +33,14 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (var obj in Model)
-                    {
-                        <tr>
-                            <td>@obj.Title</td>
-                            <td>@obj.Description</td>
-                            <td>@obj.ISBN</td>
-                            <td>@obj.Author</td>
-                            <td>@obj.Price</td>
-                            <td></td>
-                            <td>
-                                <div class="w-75 btnbtn-group" role="group">
-                                    <a asp-action="Upsert" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
-                                        <i class="bi bi-trash-fill"></i> Delete
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+             
             </table>
         </div>
     </div>
 </div>
+
+
+
+@section Scripts{
+    <script src="~/js/Product.js"></script>
+}
