@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
+using BulkyWeb.Areas.Customer.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
     [Area("Admin")]
     public class CategoryController : Controller
     {
+        
         private readonly IUnitOfWork _unitOfWork;
         public CategoryController(IUnitOfWork unitOfWork)
         {
+            
             _unitOfWork = unitOfWork;
         }
 
